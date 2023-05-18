@@ -1,0 +1,4 @@
+vtk
+SimpleITK
+metis
+pymeshlab
