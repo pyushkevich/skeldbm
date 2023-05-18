@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import SimpleITK as sitk
 import numpy as np
 import argparse

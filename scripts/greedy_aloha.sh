@@ -1,5 +1,6 @@
 #!/bin/bash
 set -x -e
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Fixed image
 FIXED=${1?}
@@ -137,7 +138,7 @@ greedy -d 3 -a -dof 6 -i $FIXED_ROI $MOVING_ROI \
 
 # Halfway space might be outside of the fixed image space due to translation
 # so find a voxel-space translation 
-python centertfm.py $FIXED_ROI $MOVING_ROI > $ROIRIGID_TCOMP
+$SCRIPT_DIR/centertfm.py $FIXED_ROI $MOVING_ROI > $ROIRIGID_TCOMP
 
 # Work out the half-transforms from fixed and moving spaces
 c3d_affine_tool $ROIRIGID $ROIRIGID_TCOMP -inv -mult -sqrt $ROIRIGID_TCOMP -mult -o $ROIRIGID_SQRT
@@ -157,9 +158,9 @@ greedy -d 3 -i $FIXED_HW $MOVING_HW -m NCC 2x2x2 -gm $FIXSEG_DIL_HW -metric \
 c3d $FIXSEG -replace $LABELS_FG_REPLACE_CMD -thresh 999 999 1 0 -o $FIXSEG_GM
 
 # Generate a surface mesh of the segmentation and smooth/parcellate it
-vtklevelset $FIXSEG_GM $FIXSEG_GM_MESH 0.5
+vtklevelset -f $FIXSEG_GM $FIXSEG_GM_MESH 0.5
 
-python mesh_partition_metis.py -r -n 200 -s 50 $FIXSEG_GM_MESH $FIXSEG_GM_MESH_METIS
+$SCRIPT_DIR/mesh_partition_metis.py -r -n 200 -s 50 $FIXSEG_GM_MESH $FIXSEG_GM_MESH_METIS
 
 # Generate the fixed space tetrahedral mesh
 cmrep_vskel -Q qvoronoi -e 4 -p 0.0 \
@@ -172,8 +173,8 @@ for label in ${LABELS_FG_IDS[@]}; do
 
     mkdir -p $LABELDIR
     c3d $FIXSEG -thresh $label $label 1 0 -type uchar -o $LABEL_BINARY_SEG_FIXED
-    vtklevelset $LABEL_BINARY_SEG_FIXED $LABEL_MESH_FIXED 0.5
-    python mesh_partition_metis.py -n 0 -s 50 $LABEL_MESH_FIXED $LABEL_MESH_SMOOTH
+    vtklevelset -f $LABEL_BINARY_SEG_FIXED $LABEL_MESH_FIXED 0.5
+    $SCRIPT_DIR/mesh_partition_metis.py -n 0 -s 50 $LABEL_MESH_FIXED $LABEL_MESH_SMOOTH
 
     PER_LABEL_RS_CMD="$PER_LABEL_RS_CMD -rs $LABEL_MESH_SMOOTH $LABEL_MESH_HW"
 done
@@ -219,7 +220,7 @@ for ((i=0;i<$N_EXP;i++)); do
     greedy -d 3 -rf $FIXED_ROI -rs $FIXSEG_GM_MESH_TETRA_HW $FIXSEG_GM_MESH_TETRA_HW_WARPED $PER_LABEL_RS_CMD -r $WARPROOT,64
 
     # Compute the tetra radii and volumes
-    python compute_thickness_delta.py -e $expid $TETRASTAT_HW $FIXSEG_GM_MESH_TETRA_HW_WARPED $TETRASTAT_HW
+    $SCRIPT_DIR/compute_thickness_delta.py -e $expid $TETRASTAT_HW $FIXSEG_GM_MESH_TETRA_HW_WARPED $TETRASTAT_HW
 
 done
 
@@ -250,7 +251,7 @@ for label in ${LABELS_FG_IDS[*]}; do
         fi
 
         # Skeletonize baseline mesh
-        cmrep_vskel -Q ~/tk/qhull/qhull/bin/qvoronoi -e 4 -p 1.2 \
+        cmrep_vskel -Q qvoronoi -e 4 -p 1.2 \
             $MESH $SKEL 2>/dev/null | tee $STDOUT
 
         # Compute the volume statistics

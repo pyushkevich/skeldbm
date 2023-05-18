@@ -1,4 +1,4 @@
 vtk
 SimpleITK
 metis
-pymeshlab
+pymeshlab==0.2.1

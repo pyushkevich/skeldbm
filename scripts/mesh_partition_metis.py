@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import argparse
 from enum import Flag
 import metis
@@ -27,6 +28,7 @@ def vtk_save_mesh(pd, filename):
     writer.SetInputData(pd)
     writer.SetFileName(filename)
     writer.SetFileVersion(42)
+    writer.SetFileTypeToBinary()
     writer.Update()
 
 
