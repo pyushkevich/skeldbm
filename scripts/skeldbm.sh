@@ -43,8 +43,8 @@ echo "Right segmentation: ${SEGR?}"
 echo "Work directory: ${WORK?}"
 
 # Read the regularization weights from the JSON
-WR=$(jq -r ".skeldbm_param.$SUBEXP.wr" < ${PJSON})
-WTJR=$(jq -r ".skeldbm_param.$SUBEXP.wtjr" < ${PJSON})
+WR=$(jq -r ".skeldbm_param.wr" < ${PJSON})
+WTJR=$(jq -r ".skeldbm_param.wtjr" < ${PJSON})
 echo "Regularization weights: ${WR?} ${WTJR?}"
 
 # Repeat processing for both sides

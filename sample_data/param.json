@@ -1,0 +1,19 @@
+{
+    "deformable_param": [
+        { "sigma": "3.0mm 1.0mm" }
+    ],
+
+    "skeldbm_param": {
+        "wr": "1.0", 
+	"wtjr": "100.0"
+    },
+
+    "foreground_labels": [
+        { "id": 1, "name": "AHippo" },
+        { "id": 2, "name": "PHippo" },
+        { "id": 10, "name": "ERC" },
+        { "id": 11, "name": "BA35" },
+        { "id": 12, "name": "BA36" },
+        { "id": 13, "name": "PHC" }
+    ]
+}
