@@ -48,3 +48,7 @@ A sample dataset is located in `sample_data`. Execute SkelDBM on the sample data
     docker run -it pyushkevich/skeldbm:latest /bin/bash
     scripts/run_sample.sh
     
+## Related Projects
+* ''ASHS'': automatic segmentation of hippocampal subfields ([docs](https://sites.google.com/view/ashs-dox/home), [github](https://github.com/pyushkevich/ashs))
+* ''CrASHS'': surface-based pipeline for matching T1-ASHS segmentations to a template ([github](https://github.com/pyushkevich/crashs))
+    
